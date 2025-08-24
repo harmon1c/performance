@@ -61,6 +61,6 @@ describe('NotFound Page', () => {
 
     expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
 
-    expect(screen.getAllByRole('link')).toHaveLength(2);
+    expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 });

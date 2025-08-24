@@ -17,9 +17,8 @@ function renderHeader(path = '/'): ReturnType<typeof render> {
 describe('Header', () => {
   it('renders logo and navigation links', () => {
     renderHeader();
-    expect(screen.getByText('Pokemon Explorer')).toBeInTheDocument();
+    expect(screen.getByText('CO2 Explorer')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
   });
 
   it('highlights Home link when on /', () => {
@@ -28,11 +27,7 @@ describe('Header', () => {
     expect(homeLink).toHaveClass('bg-white/40');
   });
 
-  it('highlights About link when on /about', () => {
-    renderHeader('/about');
-    const aboutLink = screen.getByRole('link', { name: 'About' });
-    expect(aboutLink).toHaveClass('bg-white/40');
-  });
+  // About page removed; no highlight test
 
   it('toggles theme when theme button is clicked', async () => {
     renderHeader();

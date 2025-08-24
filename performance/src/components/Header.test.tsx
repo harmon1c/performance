@@ -21,8 +21,7 @@ describe('Header Component', () => {
 
   it('contains header text', () => {
     render(<HeaderWithProviders />);
-    const headerElement = screen.getByRole('banner');
-    expect(headerElement).toBeInTheDocument();
+    expect(screen.getByText('CO2 Explorer')).toBeInTheDocument();
   });
 
   it('has proper styling classes', () => {

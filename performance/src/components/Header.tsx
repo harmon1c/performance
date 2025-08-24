@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
                 to="/"
                 className="text-2xl font-bold whitespace-nowrap dark:text-white dark:drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
               >
-                Pokemon Explorer
+                CO2 Explorer
               </Link>
             </div>
             <nav className="nav flex-1 min-w-0">
@@ -32,18 +32,6 @@ export const Header: React.FC = () => {
                     }`}
                   >
                     Home
-                  </Link>
-                </li>
-                <li className="nav__list-item">
-                  <Link
-                    to="/about"
-                    className={`nav__list-link px-3 py-2 rounded-lg transition-colors duration-200 border border-transparent shadow-sm ${
-                      location.pathname === '/about'
-                        ? 'bg-white/40 text-white font-semibold dark:bg-white/20 dark:text-white dark:shadow-[0_2px_8px_rgba(0,0,0,0.25)] shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
-                        : 'text-white/80 hover:text-white hover:bg-white/20 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/10 dark:hover:shadow-[0_2px_8px_rgba(0,0,0,0.18)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.10)]'
-                    }`}
-                  >
-                    About
                   </Link>
                 </li>
               </ul>

@@ -27,13 +27,6 @@ vi.mock('./components/PokemonDetailPanel', () => ({
     <div data-testid="pokemon-detail">Pokemon Detail Panel</div>
   ),
 }));
-
-vi.mock('./pages/About', () => ({
-  About: (): React.JSX.Element => (
-    <div data-testid="about">About Component</div>
-  ),
-}));
-
 vi.mock('./pages/NotFound', () => ({
   NotFound: (): React.JSX.Element => (
     <div data-testid="not-found">Not Found Component</div>
