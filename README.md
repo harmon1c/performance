@@ -1,31 +1,53 @@
-## React Performance Task
+## CO2 Explorer (React Performance Task)
 
-This repository contains the implementation of the RS School React Performance task (CO2 Data Explorer).
+Implementation of the RS School React Performance assignment. The app loads a large OWID CO2 dataset with Suspense and provides filtering, sorting, and extra columns with attention to performance.
 
-### Status
-Scaffold stage: old project (Pokemon) slated for removal; new Suspense data resource placeholder added.
+### Features mapped to task
+- Data loading via React Suspense with fallback UI.
+- Countries list with latest values and per-country expandable yearly table.
+- Required yearly columns: year, population, co2, co2_per_capita (N/A for missing).
+- Modal to select additional columns from available yearly fields.
+- Controls: Year selector (with brief highlight on change), Region filter, Search, Sort (name, population, CO2, CO2 per capita).
+- Memoization: useMemo for derived data, React.memo for tables/rows, useCallback for handlers.
+- Virtualized yearly table rendering.
 
-### Planned Features (High Level)
-- Load & parse large CO2 dataset (~100MB) with React Suspense fallback.
-- Country list with required metrics (year, population, co2, co2_per_capita).
-- Year selector, region filter, search, sorting (name/population).
-- Dynamic additional columns via modal.
-- Memoization & render optimization (useMemo, useCallback, React.memo).
-- Profiling before & after optimizations (React DevTools Profiler screenshots & analysis).
+### Score checklist (self-check)
+- [x] Fetch and display country data (name, latest population, ISO)
+- [x] Yearly table with required columns (N/A for missing)
+- [x] Modal for extra columns
+- [x] Year selector with highlight when values change
+- [x] Filter by region
+- [x] Search by country name
+- [x] Sort by population (selected year) and name (asc/desc)
+- [x] useMemo/useCallback/React.memo applied
+- [x] Suspense fallback UI in place
 
-### Profiling (Placeholders)
-Will include: commit duration, render duration, interactions, flame graph, ranked chart comparisons.
+### Getting started
+1) Install dependencies
+	- `npm install`
+2) Run dev server
+	- `npm run dev`
+3) Lint
+	- `npm run lint`
 
-### Run Locally
-1. Install deps: npm install
-2. Dev server: npm run dev
-3. Tests (none yet): npm test
+### Profiling notes
+See `performance/README-PERF.md` for the detailed guide. Summary and baseline screenshots below.
 
-### Architecture (Preview)
-See PERFORMANCE_PLAN.md for detailed staged plan & checklist.
+#### Baseline profiling (before optimizations)
+Captured with React DevTools Profiler (one session per interaction):
+- Initial mount: ![initial mount](./performance/docs/perf/baseline/initial_render.png)
+- Sort by name: ![sort by name](./performance/docs/perf/baseline/sort_name.png)
+- Sort by CO2: ![sort by CO2](./performance/docs/perf/baseline/sort_co2.png)
+- Search: ![search](./performance/docs/perf/baseline/search.png)
+- Year change: ![year](./performance/docs/perf/baseline/year.png)
+- Columns toggle: ![columns](./performance/docs/perf/baseline/columns.png)
 
-### Notes
-No UI component libraries will be used. TypeScript strict without any/ts-ignore.
+Each interaction also has a Ranked view (see the baseline folder).
 
----
-Readme will expand with profiling results and optimization notes.
+#### After profiling (after optimizations)
+To be captured and added in `./performance/docs/perf/after/` with the same scenarios. A brief summary will be appended here after capture.
+
+### Tech
+- Vite + React + TypeScript (strict)
+- Redux Toolkit for filters/columns selection
+- Tailwind for styling (no component libraries)

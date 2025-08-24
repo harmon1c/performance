@@ -7,13 +7,13 @@ interface PaginationProps {
   isLoading?: boolean;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+const PaginationComponent: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
   isLoading = false,
 }) => {
-  const getPageNumbers = (): number[] => {
+  const pageNumbers = React.useMemo((): number[] => {
     const pages: number[] = [];
     const maxVisible = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
@@ -28,20 +28,37 @@ export const Pagination: React.FC<PaginationProps> = ({
     }
 
     return pages;
-  };
+  }, [currentPage, totalPages]);
+
+  const firstPage = pageNumbers[0] || 1;
+  const lastPage = pageNumbers[pageNumbers.length - 1] || totalPages;
+
+  const goPrev = React.useCallback(
+    () => onPageChange(currentPage - 1),
+    [onPageChange, currentPage]
+  );
+  const goNext = React.useCallback(
+    () => onPageChange(currentPage + 1),
+    [onPageChange, currentPage]
+  );
+  const goFirst = React.useCallback(() => onPageChange(1), [onPageChange]);
+  const goLast = React.useCallback(
+    () => onPageChange(totalPages),
+    [onPageChange, totalPages]
+  );
+  const goTo = React.useCallback(
+    (p: number) => onPageChange(p),
+    [onPageChange]
+  );
 
   if (totalPages <= 1) {
     return null;
   }
 
-  const pageNumbers = getPageNumbers();
-  const firstPage = pageNumbers[0] || 1;
-  const lastPage = pageNumbers[pageNumbers.length - 1] || totalPages;
-
   return (
     <div className="flex justify-center items-center space-x-2 mt-8">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={goPrev}
         disabled={currentPage === 1 || isLoading}
         className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200
           dark:text-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -52,7 +69,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {firstPage > 1 && (
         <>
           <button
-            onClick={() => onPageChange(1)}
+            onClick={goFirst}
             disabled={isLoading}
             className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200
               dark:text-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -70,7 +87,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {pageNumbers.map((page) => (
         <button
           key={page}
-          onClick={() => onPageChange(page)}
+          onClick={() => goTo(page)}
           disabled={isLoading}
           className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200
             ${
@@ -92,7 +109,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             </span>
           )}
           <button
-            onClick={() => onPageChange(totalPages)}
+            onClick={goLast}
             disabled={isLoading}
             className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200
               dark:text-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -103,7 +120,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       )}
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={goNext}
         disabled={currentPage === totalPages || isLoading}
         className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200
           dark:text-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -113,3 +130,6 @@ export const Pagination: React.FC<PaginationProps> = ({
     </div>
   );
 };
+
+export const Pagination = React.memo(PaginationComponent);
+Pagination.displayName = 'Pagination';

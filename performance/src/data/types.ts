@@ -7,9 +7,10 @@ export interface YearRecordRaw {
 }
 
 export interface CountryData {
-  code: string; // key from root (e.g. USA)
-  name: string; // best-effort name
-  iso_code: string | null; // consistently present (null if absent)
-  years: YearRecordRaw[]; // full array as-is
-  latestYear: number | null; // null when unavailable
+  code: string;
+  name: string;
+  iso_code: string | null;
+  region: string | null;
+  years: YearRecordRaw[];
+  latestYear: number | null;
 }

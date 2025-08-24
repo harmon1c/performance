@@ -7,7 +7,9 @@ interface SearchProps {
   onClear?: () => void;
 }
 
-export function Search(props: SearchProps): React.JSX.Element {
+export const Search = React.memo(function Search(
+  props: SearchProps
+): React.JSX.Element {
   const { value, onChange, onSearch, onClear } = props;
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -92,4 +94,4 @@ export function Search(props: SearchProps): React.JSX.Element {
       </form>
     </div>
   );
-}
+});

@@ -5,6 +5,7 @@ import type { CountryData, YearRecordRaw } from '../data/types';
 export interface DerivedCo2 {
   filtered: CountryData[];
   availableExtraKeys: string[];
+  regions: string[];
 }
 
 function matchesSearch(s: string, q: string): boolean {
@@ -17,7 +18,17 @@ export function useCo2Data(countries: CountryData[]): DerivedCo2 {
   const filtered = React.useMemo(() => {
     let arr = countries;
     if (region !== 'all') {
-      arr = arr.filter(() => true);
+      const target = region.toLowerCase();
+      arr = arr.filter((c) => {
+        const r = (c.region ?? '').toLowerCase();
+        if (!r) {
+          return false;
+        }
+        if (target === 'americas') {
+          return r.includes('america');
+        }
+        return r === target || r.includes(target) || target.includes(r);
+      });
     }
     if (search.trim()) {
       const q = search.trim();
@@ -32,24 +43,24 @@ export function useCo2Data(countries: CountryData[]): DerivedCo2 {
       arr = arr.filter((c) => c.years.some((y) => y.year === year));
     }
     const copy = arr.slice();
-    copy.sort((a, b) => {
-      const dir = sort.direction === 'asc' ? 1 : -1;
+    const dir = sort.direction === 'asc' ? 1 : -1;
+    const compareWithin = (a: CountryData, b: CountryData): number => {
       switch (sort.field) {
         case 'name':
           return a.name.localeCompare(b.name) * dir;
         case 'population': {
-          const av = latestVal(a, 'population');
-          const bv = latestVal(b, 'population');
+          const av = valueFor(a, 'population', year);
+          const bv = valueFor(b, 'population', year);
           return compareNullable(av, bv) * dir;
         }
         case 'co2': {
-          const av = latestVal(a, 'co2');
-          const bv = latestVal(b, 'co2');
+          const av = valueFor(a, 'co2', year);
+          const bv = valueFor(b, 'co2', year);
           return compareNullable(av, bv) * dir;
         }
         case 'co2_per_capita': {
-          const av = latestVal(a, 'co2_per_capita');
-          const bv = latestVal(b, 'co2_per_capita');
+          const av = valueFor(a, 'co2_per_capita', year);
+          const bv = valueFor(b, 'co2_per_capita', year);
           return compareNullable(av, bv) * dir;
         }
         case 'year': {
@@ -60,9 +71,21 @@ export function useCo2Data(countries: CountryData[]): DerivedCo2 {
         default:
           return 0;
       }
-    });
+    };
+
+    copy.sort(compareWithin);
     return copy;
   }, [countries, region, search, year, sort.direction, sort.field]);
+
+  const regions = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const c of countries) {
+      if (typeof c.region === 'string' && c.region.trim()) {
+        set.add(c.region);
+      }
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [countries]);
 
   const availableExtraKeys = React.useMemo(() => {
     const base = new Set<string>();
@@ -92,7 +115,7 @@ export function useCo2Data(countries: CountryData[]): DerivedCo2 {
     return Array.from(base).sort();
   }, [filtered]);
 
-  return { filtered, availableExtraKeys };
+  return { filtered, availableExtraKeys, regions };
 }
 
 function latestVal(c: CountryData, key: keyof YearRecordRaw): number | null {
@@ -109,6 +132,24 @@ function latestVal(c: CountryData, key: keyof YearRecordRaw): number | null {
     }
   }
   return v;
+}
+
+function valueFor(
+  c: CountryData,
+  key: keyof YearRecordRaw,
+  year: number | 'all'
+): number | null {
+  if (year !== 'all') {
+    for (let i = 0; i < c.years.length; i++) {
+      const rec = c.years[i];
+      if (rec && rec.year === year) {
+        const x = rec[key];
+        return typeof x === 'number' && Number.isFinite(x) ? x : null;
+      }
+    }
+    return null;
+  }
+  return latestVal(c, key);
 }
 
 function compareNullable(a: number | null, b: number | null): number {

@@ -35,7 +35,6 @@ export const ColumnsModal = React.memo(function ColumnsModal(
     setLocal([]);
   }, []);
 
-  // Outside click to close (always set; guard inside handler)
   React.useEffect(() => {
     const onDocClick = (e: MouseEvent): void => {
       const tgt = e.target;
@@ -54,7 +53,6 @@ export const ColumnsModal = React.memo(function ColumnsModal(
     return (): void => document.removeEventListener('mousedown', onDocClick);
   }, [open, onClose]);
 
-  // Return null after hooks so hook order stays stable
   if (!open) {
     return null;
   }
