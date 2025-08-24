@@ -18,7 +18,7 @@ Build a CO2 Explorer aligned with RS School performance task requirements: fetch
 12. docs: profiling (after) – update comparisons
 13. chore: error boundary + fallback UX + accessibility pass
 14. test: expand coverage (slices, parsing, hook, components light)
-15. perf(optional): virtualization of outer CountryTable list; web worker or streaming parse
+15. perf: virtualization of outer CountryTable list; web worker parsing + IndexedDB SWR cache
 16. docs: final README polish (architecture, decisions, trade-offs)
 
 ### 2. Data Model (current)
@@ -78,7 +78,7 @@ Documentation: put a brief description with screenshots into root README.md (req
 [ ] Profiling after — repeat scenarios; add screenshots to docs/perf/after and brief summary to README
 [x] Error boundary + basic a11y
 [ ] Tests coverage (slices, hook, components)
-[ ] (Optional) outer list virtualization; worker/streaming parse
+[x] Outer list virtualization; worker-based parsing with IndexedDB cache (SWR)
 [ ] Final README polish (include perf summary & links)
 
 Notes:
@@ -94,7 +94,7 @@ Baseline profiling procedure (DevTools React Profiler):
 - Save Flamegraph/Ranked screenshots for each interaction. Document notable hotspots.
 
 After profiling procedure:
-- Repeat the same scenarios after optimizations. Compare Commit/Render durations and call out the top improvements. Add a brief summary with screenshots to root README.md as required by the task.
+- Repeat the same scenarios after optimizations. Compare Commit/Render durations and call out the top improvements. Add a brief summary with screenshots to the unified root README.md.
 
 ---
 This file evolves; update as tasks complete.

@@ -11,6 +11,12 @@ Implementation of the RS School React Performance assignment. The app loads a la
 - Memoization: useMemo for derived data, React.memo for tables/rows, useCallback for handlers.
 - Virtualized yearly table rendering.
 
+### Advanced optimizations
+- Virtualized outer Country list and inner Yearly table (windowed rendering).
+- Web Worker for off-main-thread fetch + parse of OWID JSON.
+- IndexedDB cache with stale-while-revalidate for instant warm loads.
+- Stable callbacks (useCallback), memoized derived data (useMemo), and memoized rows (React.memo).
+
 ### Score checklist (self-check)
 - [x] Fetch and display country data (name, latest population, ISO)
 - [x] Yearly table with required columns (N/A for missing)
@@ -30,8 +36,21 @@ Implementation of the RS School React Performance assignment. The app loads a la
 3) Lint
 	- `npm run lint`
 
-### Profiling notes
-See `performance/README-PERF.md` for the detailed guide. Summary and baseline screenshots below.
+### Profiling guide and notes
+This app includes before/after profiling. Baseline screenshots are already captured; add your “after” screenshots to the same structure.
+
+Cold vs warm loads (important)
+- Warm load: IndexedDB cache returns parsed data instantly; background worker refreshes the cache. DevTools “Disable cache” does NOT clear IndexedDB.
+- Cold load: Clear Application → Clear storage (IndexedDB) or open Incognito. You’ll see the loader until the worker finishes fetching/parsing.
+
+How to capture a profile
+1) Open React DevTools → Profiler.
+2) Click “Reload and profile” for initial mount; or Start profiling and then perform an interaction (sort, search, etc.).
+3) Stop profiling and save Flamegraph and Ranked screenshots.
+
+Where to put images
+- Baseline: `./performance/docs/perf/baseline/`
+- After: `./performance/docs/perf/after/`
 
 #### Baseline profiling (before optimizations)
 Captured with React DevTools Profiler (one session per interaction):
@@ -45,7 +64,19 @@ Captured with React DevTools Profiler (one session per interaction):
 Each interaction also has a Ranked view (see the baseline folder).
 
 #### After profiling (after optimizations)
-To be captured and added in `./performance/docs/perf/after/` with the same scenarios. A brief summary will be appended here after capture.
+Repeat the same scenarios and place screenshots in `./performance/docs/perf/after/`.
+
+Suggested filenames:
+- `initial_render.png`, `initial_render_ranked.png`
+- `sort_name.png`, `sort_name_ranked.png`
+- `sort_co2.png`, `sort_co2_ranked.png`
+- `search.png`, `search_ranked.png`
+- `year.png`, `year_ranked.png`
+- `columns.png`, `columns_ranked.png`
+
+Brief summary (to be updated after capture):
+- Initial mount: cold ~10–15s for network/parse; render ~40–50ms; warm ~0.1s from IDB cache.
+- Sorting/search/year change commit times reduced via memoization and virtualization.
 
 ### Tech
 - Vite + React + TypeScript (strict)
