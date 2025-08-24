@@ -31,8 +31,6 @@ const mockOnClear = vi.fn();
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(window.localStorage.getItem).mockReturnValue(null);
-  vi.mocked(window.localStorage.setItem).mockClear();
 });
 
 describe('Search Component', () => {
@@ -43,12 +41,12 @@ describe('Search Component', () => {
       );
 
       expect(
-        screen.getByPlaceholderText(/enter pokemon name/i)
+        screen.getByPlaceholderText(/enter country name/i)
       ).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: /search/i })
       ).toBeInTheDocument();
-      expect(screen.getByText('Search Pokemon')).toBeInTheDocument();
+      expect(screen.getByText('Search Country')).toBeInTheDocument();
     });
 
     it('renders clear button', () => {
@@ -67,7 +65,7 @@ describe('Search Component', () => {
     });
 
     it('displays initial query when provided', () => {
-      const initialQuery = 'pikachu';
+      const initialQuery = 'canada';
       render(
         <Search
           onSearch={mockOnSearch}
@@ -76,7 +74,7 @@ describe('Search Component', () => {
         />
       );
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       expect(input).toHaveValue(initialQuery);
     });
 
@@ -85,23 +83,8 @@ describe('Search Component', () => {
         <Search onSearch={mockOnSearch} onChange={mockOnChange} value="" />
       );
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       expect(input).toHaveValue('');
-    });
-
-    it('displays previously saved search term from localStorage on mount', () => {
-      vi.mocked(window.localStorage.getItem).mockReturnValue('savedPokemon');
-
-      render(
-        <Search
-          onSearch={mockOnSearch}
-          onChange={mockOnChange}
-          value="savedPokemon"
-        />
-      );
-
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
-      expect(input).toHaveValue('savedPokemon');
     });
   });
 
@@ -110,23 +93,23 @@ describe('Search Component', () => {
       const user = userEvent.setup();
       render(<ControlledSearchTestWrapper onSearch={mockOnSearch} />);
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
-      await user.type(input, 'charizard');
+      const input = screen.getByPlaceholderText(/enter country name/i);
+      await user.type(input, 'germany');
 
-      expect(input).toHaveValue('charizard');
+      expect(input).toHaveValue('germany');
     });
 
     it('triggers search callback with correct parameters on form submit', async () => {
       const user = userEvent.setup();
       render(<ControlledSearchTestWrapper onSearch={mockOnSearch} />);
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       const searchButton = screen.getByRole('button', { name: /search/i });
 
-      await user.type(input, 'bulbasaur');
+      await user.type(input, 'bulgaria');
       await user.click(searchButton);
 
-      expect(mockOnSearch).toHaveBeenCalledWith('bulbasaur');
+      expect(mockOnSearch).toHaveBeenCalledWith('bulgaria');
       expect(mockOnSearch).toHaveBeenCalledTimes(1);
     });
 
@@ -134,25 +117,25 @@ describe('Search Component', () => {
       const user = userEvent.setup();
       render(<ControlledSearchTestWrapper onSearch={mockOnSearch} />);
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
 
-      await user.type(input, 'squirtle');
+      await user.type(input, 'switzerland');
       await user.keyboard('{Enter}');
 
-      expect(mockOnSearch).toHaveBeenCalledWith('squirtle');
+      expect(mockOnSearch).toHaveBeenCalledWith('switzerland');
     });
 
     it('trims whitespace from search input before calling onSearch', async () => {
       const user = userEvent.setup();
       render(<ControlledSearchTestWrapper onSearch={mockOnSearch} />);
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       const searchButton = screen.getByRole('button', { name: /search/i });
 
-      await user.type(input, '  eevee  ');
+      await user.type(input, '  germany  ');
       await user.click(searchButton);
 
-      expect(mockOnSearch).toHaveBeenCalledWith('eevee');
+      expect(mockOnSearch).toHaveBeenCalledWith('germany');
     });
   });
 
@@ -166,10 +149,10 @@ describe('Search Component', () => {
         />
       );
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       const clearButton = screen.getByRole('button', { name: /clear/i });
 
-      await user.type(input, 'jigglypuff');
+      await user.type(input, 'japan');
       await user.click(clearButton);
 
       expect(input).toHaveValue('');
@@ -180,29 +163,14 @@ describe('Search Component', () => {
       const user = userEvent.setup();
       render(<ControlledSearchTestWrapper onSearch={mockOnSearch} />);
 
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
+      const input = screen.getByPlaceholderText(/enter country name/i);
       const clearButton = screen.getByRole('button', { name: /clear/i });
 
-      await user.type(input, 'psyduck');
+      await user.type(input, 'poland');
       await user.click(clearButton);
 
       expect(input).toHaveValue('');
     });
   });
-
-  describe('LocalStorage Integration', () => {
-    it('retrieves saved search term on component mount when initialQuery is provided', () => {
-      const savedQuery = 'storedPokemon';
-      render(
-        <Search
-          onSearch={mockOnSearch}
-          onChange={mockOnChange}
-          value={savedQuery}
-        />
-      );
-
-      const input = screen.getByPlaceholderText(/enter pokemon name/i);
-      expect(input).toHaveValue(savedQuery);
-    });
-  });
+  // No localStorage usage in Search component; value is fully controlled via props.
 });

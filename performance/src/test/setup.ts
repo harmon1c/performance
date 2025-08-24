@@ -33,7 +33,24 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
-global.fetch = vi.fn();
+global.fetch = vi.fn().mockResolvedValue({
+  ok: true,
+  json: async () => ({}),
+});
+
+class MockWorker {
+  public onmessage: ((ev: MessageEvent) => void) | null = null;
+  public onerror: ((ev: ErrorEvent) => void) | null = null;
+  public onmessageerror: ((ev: MessageEvent) => void) | null = null;
+  public addEventListener(): void {}
+  public removeEventListener(): void {}
+  public dispatchEvent(): boolean {
+    return false;
+  }
+  public postMessage(): void {}
+  public terminate(): void {}
+}
+globalThis.Worker = MockWorker;
 
 beforeEach(() => {
   vi.clearAllMocks();

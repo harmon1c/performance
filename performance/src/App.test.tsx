@@ -12,12 +12,6 @@ vi.mock('./components/ErrorBoundary', () => ({
   }): React.JSX.Element => <div data-testid="error-boundary">{children}</div>,
 }));
 
-vi.mock('./components/Layout', () => ({
-  Layout: (): React.JSX.Element => (
-    <div data-testid="layout">Layout Component</div>
-  ),
-}));
-
 vi.mock('./pages/Home', () => ({
   Home: (): React.JSX.Element => <div data-testid="home">Home Component</div>,
 }));
@@ -33,26 +27,6 @@ vi.mock('./pages/NotFound', () => ({
   ),
 }));
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    BrowserRouter: ({
-      children,
-    }: {
-      children: React.ReactNode;
-    }): React.JSX.Element => <div data-testid="browser-router">{children}</div>,
-    Routes: ({
-      children,
-    }: {
-      children: React.ReactNode;
-    }): React.JSX.Element => <div data-testid="routes">{children}</div>,
-    Route: ({ element }: { element: React.ReactNode }): React.JSX.Element => (
-      <div data-testid="route">{element}</div>
-    ),
-  };
-});
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -63,26 +37,22 @@ describe('App Component', () => {
     expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
   });
 
-  it('renders BrowserRouter', () => {
-    renderWithProviders(<App />);
-    expect(screen.getByTestId('browser-router')).toBeInTheDocument();
+  it('renders main container', () => {
+    const { container } = renderWithProviders(<App />);
+    expect(container.querySelector('.site-container')).toBeInTheDocument();
   });
 
-  it('renders main structure with routing components', () => {
-    renderWithProviders(<App />);
+  it('renders main structure with header and footer', () => {
+    const { container } = renderWithProviders(<App />);
     expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
-    expect(screen.getByTestId('browser-router')).toBeInTheDocument();
-    expect(screen.getByTestId('routes')).toBeInTheDocument();
+    expect(container.querySelector('header.header')).toBeInTheDocument();
+    expect(container.querySelector('footer.footer')).toBeInTheDocument();
   });
 
   it('has proper CSS classes for background styling', () => {
     const { container } = renderWithProviders(<App />);
-    const mainDiv = container.querySelector('.min-h-screen.bg-gradient-to-br');
+    const mainDiv = container.querySelector('.site-container.min-h-screen');
     expect(mainDiv).toBeInTheDocument();
-    expect(mainDiv).toHaveClass(
-      'from-blue-50',
-      'via-indigo-50',
-      'to-purple-50'
-    );
+    expect(mainDiv).toHaveClass('flex', 'flex-col', 'overflow-x-hidden');
   });
 });
